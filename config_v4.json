@@ -1,0 +1,15 @@
+{
+  "csvStructure":"ONS v4",
+  "processOrderDict": {
+    "0": {
+      "func": "confirmMandatoryColumns",
+      "args": {"cols":["time, geography_codelist"]}
+    },
+    "1": {
+      "func":"confirmAtLeastOnePopulated",
+      "args": {
+              "cols":[0, "Data_Marker"]
+              }
+    }
+  }
+}
