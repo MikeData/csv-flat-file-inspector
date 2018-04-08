@@ -1,56 +1,34 @@
 # -*- coding: utf-8 -*-
 
-from errors import simpleErrors
-import pandas as pd
+"""
+Hold individual inspection functions that may be called on by the config.json being used.
+"""
+
+# Imports
 
 
-# ==================
-# Reusable functions
+# Local Imports
+from sharedFunctionLib import *
 
-# Get variables out of an args dictionary
-def parseArgs(key, args):
-
-    errors = simpleErrors()
-
-    try:
-        return args[key]
-    except:
-        errors.cannotParseAgs(key, args)
-
-
-# Convert columns identified by index to headers in the CSV
-def colIndexToString(df, cols):
-
-    newCols = []
-    for col in cols:
-
-        if type(col) == str:
-            newCols.append(col)
-        else:
-            col = df.columns.get_loc(col)
-            newCols.append(col)
-
-    return newCols
-
-
-
-# Individual File Inspection Functions
 
 # ###################################################################################
 # Confirm that all columns specified as mandatory are present in the column headers
 
-def confirmMandatoryColumns(df, resultDict, args):
+def confirmMandatoryColumns(df, resultsDict, args):
 
     cols = parseArgs("cols", args)
+
+    resultLabel = "The following mandatory columns are missing:"
+
     for col in cols:
         if col not in df.columns.values:
 
-            if "confirmMandatoryColumns" not in resultDict:
-                resultDict.update({"The following mandatory columns are missing:":[]})
+            if resultLabel not in resultsDict:
+                resultsDict.update({resultLabel:[]})
 
-            resultDict["confirmMandatoryColumns"].append(col)
+            resultsDict[resultLabel].append(col)
 
-    return resultDict
+    return resultsDict
 
 
 # ###################################################################################
@@ -58,33 +36,30 @@ def confirmMandatoryColumns(df, resultDict, args):
 # example: you might need to have either an observation or a datamarker
 def confirmAtLeastOnePopulated(df, resultsDict, args):
 
-    cols = parseArgs("cols", args)
-
-    # Run it through an index>string conversion...just in case
-    cols = colIndexToString(cols)
+    # Get columns
+    cols = prepareColumnHeaders(df, args)
 
     # Create a sample frame with just the columns we are looking at merged into one
     # if there's only one columns - skip most of this
-
-    if len(cols) > 1:
-        sampleFrame[col] = df[col][0]
-        sampleFrame.fillna("", inplace=True)
-
-        for col in cols[1:]:
-            sampleFrame[col] = sampleFrame[col] + df[col]
-
-    else: # only one column
-        sampleFrame[col] = df[col]
-        col = [col]
-
-
-    # Now we have a single column, look for blanks
-    sampleFrame.fillna("", inplace=True)
+    sampleFrame = concatenateIntoFirstColumn(df, cols)
 
     # Return row indexes where the "cell" is still blank
-    resultFrame = sampleFrame[sampleFrame[col] == ""]
+    resultsList = sampleFrame[cols[0]][sampleFrame[cols[0]].astype(str) == ""]
 
-    return list(sampleFrame.index)
+    # Add one to row numbers, as headers are not indexed
+    # i.e in pandas, row 1 of a spreadsheet is row 0
+    resultsList = [x+1 for x in resultsList.index.values]
+    totalResults = len(resultsList)
+
+    # Limit result rows
+    if len(resultsList) > 10:
+        resultsList = resultsList[:10]
+
+    if len(resultsList) > 0:
+        resultLabel = "At least one of these columns '{cols}' should always have a value. The following rows (showing {a} out of {b}) do not: ".format(a=len(resultsList), b=totalResults,cols=",".join(cols)) + ".".join(cols)
+        resultsDict.update({resultLabel:resultsList})
+
+    return resultsDict
 
 
 

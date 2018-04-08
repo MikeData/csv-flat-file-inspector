@@ -3,12 +3,13 @@
   "processOrderDict": {
     "0": {
       "func": "confirmMandatoryColumns",
-      "args": {"cols":["time, geography_codelist"]}
+      "args": {"cols":["Time", "Geography_codelist"]}
     },
     "1": {
       "func":"confirmAtLeastOnePopulated",
       "args": {
-              "cols":[0, "Data_Marker"]
+              "cols":[0],
+              "cols_optional":["Data_Marking"]
               }
     }
   }
