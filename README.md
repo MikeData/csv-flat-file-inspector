@@ -14,7 +14,9 @@ Structurally agnostic tool for inspecting/validating one-observation-per-row dim
 ```
 from csvInspect.framework import inspector
 inspector(<CSV>, <url for config>)
+```
 
+example:
 ```
 warnings = inspector("sample.csv", "https://raw.githubusercontent.com/mikeAdamss/validation-configs/master/example/config.json")
 print(warnings)
