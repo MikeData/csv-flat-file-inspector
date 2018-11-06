@@ -1,4 +1,7 @@
 
+WORK IN PROGRESS
+
+
 # CSV Inspector
 
 Structurally agnostic tool for inspecting/validating one-observation-per-row dimensioned CSV data.
