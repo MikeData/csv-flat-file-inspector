@@ -47,4 +47,4 @@ class controller(object):
 
 
 def inspector(source, configUrl, env="local"):
-    return controller(source, configUrl, env)
+    return controller(source, configUrl, env).warnings
