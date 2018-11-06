@@ -9,7 +9,7 @@ Structurally agnostic tool for inspecting/validating one-observation-per-row dim
 
 ## Install
 
-`pip install git+https://github.com/ONS-OpenData/csvInspect.git`
+`pip install git+https://github.com/ONS-OpenData/csvInspector.git`
 
 
 ## Usage
